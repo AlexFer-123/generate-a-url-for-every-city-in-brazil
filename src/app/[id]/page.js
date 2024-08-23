@@ -2,19 +2,20 @@ import { cities } from '../data/cities.js';
 
 export async function getStaticPaths() {
   const paths = cities.map((item) => ({
-    params: { id: `${strToURL(item.nome)}` },
+    params: { id: `${strToURL(item.nome)}-${item.microrregiao.mesorregiao.UF.sigla.toLowerCase()}` },
   }));
 
   return { paths, fallback: false };
 }
 
 export async function generateStaticParams() {
-  return cities.map((item) => ({
-    id: `${strToURL(item.nome)}`, // Certifique-se de que a chave corresponde ao nome do parâmetro dinâmico
+  return cities.map((item) => (
+    {
+    id: `${strToURL(item.nome)}-${item.microrregiao.mesorregiao.UF.sigla.toLowerCase()}`, // Certifique-se de que a chave corresponde ao nome do parâmetro dinâmico
   }));
 }
 
-function strToURL(str) {
+const strToURL = (str) => {
   return str.toLowerCase().trim()
   .replace(/[áàãâä]/g, "a")
   .replace(/[éèẽêë]/g, "e")
@@ -30,7 +31,7 @@ function strToURL(str) {
 export default function ItemPage({ params }) {
 
   const item = cities.find((item) => {
-    return strToURL(item.nome) === params.id
+    return `${strToURL(item.nome)}-${item.microrregiao.mesorregiao.UF.sigla.toLowerCase()}` === params.id
   });
 
   if (!item) {
